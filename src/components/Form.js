@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const Form = () => {
+const Form = ({productos, setProductos}) => {
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
@@ -17,6 +17,10 @@ const Form = () => {
             description
         }).then( res => {
             console.log(res.data);
+            setProductos([...productos, res.data.producto])
+            setTitle("");
+            setPrice("");
+            setDescription("");
         });
     }
     return (
@@ -26,7 +30,7 @@ const Form = () => {
                     <label htmlFor="title" className="col-form-label">Title</label>
                 </div>
                 <div className="col-auto">
-                    <input type="text" id="title" className="form-control" name="title"
+                    <input type="text" id="title" className="form-control" name="title" value={title}
                         onChange={ (e) => setTitle(e.target.value)}
                     />
                 </div>
@@ -36,7 +40,7 @@ const Form = () => {
                     <label htmlFor="price" className="col-form-label">Price</label>
                 </div>
                 <div className="col-auto">
-                    <input type="number" id="price" className="form-control" name="price"
+                    <input type="number" id="price" className="form-control" name="price" value={price}
                         onChange={ (e) => setPrice(e.target.value)}
                     />
                 </div>
@@ -46,7 +50,7 @@ const Form = () => {
                     <label htmlFor="description" className="col-form-label">Description</label>
                 </div>
                 <div className="col-auto">
-                    <textarea className="form-control" id="description" name="description"
+                    <textarea className="form-control" id="description" name="description" value={description}
                         onChange={ (e) => setDescription(e.target.value)}
                     />
                 </div>

@@ -1,19 +1,21 @@
-import Form from "./components/Form";
+import Product from "./components/Product";
+import ProductForm from "./components/ProductForm";
+import {
+  Switch,
+  Route,
+} from "react-router-dom";
 
 function App() {
   return (
-    <div className="container mt-5">
-      <div className="row mb-4">
-        <div className="col-12">
-          <h2>Product Manager</h2>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-12">
-          <Form />
-        </div>
-      </div>
-    </div>
+    <Switch>
+        <Route path="/:id_producto">
+            <Product />
+        </Route>
+        <Route path="/">
+            <ProductForm />
+        </Route>
+    </Switch>
+    
   );
 }
 
