@@ -1,17 +1,46 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useHistory } from "react-router-dom";
 
-const Form = ({productos, setProductos}) => {
+const Form = ({productos, setProductos, createNewProducto, id_producto}) => {
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
-    async function onSubmitForm(e){
+    const history = useHistory();
+
+
+    useEffect(() => {
+      if(!createNewProducto){
+        getProductoById();
+      }
+    }, [])
+
+    function getProductoById(){
+        axios.get(`http://localhost:8000/api/productos/${id_producto}`)
+        .then( res => {
+            console.log(res.data.producto);
+            setTitle(res.data.producto.title);
+            setPrice(res.data.producto.price);
+            setDescription(res.data.producto.description);
+        })
+        .catch(err => console.log(err));
+    }
+    
+    
+    function onSubmitForm(e){
         e.preventDefault();
         if(title === "" || price === "" || description === ""){
             console.log("llenar todo el formulario")
             return;
         }
-        await axios.post('http://localhost:8000/api/productos/new', {
+        if(createNewProducto){
+            createProducto();
+        }else{
+            editProducto();
+        }
+    }
+    function createProducto(){
+        axios.post('http://localhost:8000/api/productos/new', {
             title,
             price,
             description
@@ -23,6 +52,21 @@ const Form = ({productos, setProductos}) => {
             setDescription("");
         });
     }
+    
+    function editProducto(){
+        axios.put(`http://localhost:8000/api/productos/update/${id_producto}`, {
+            title,
+            price,
+            description
+        }).then( res => {
+            console.log(res.data);
+            setTitle("");
+            setPrice("");
+            setDescription("");
+            history.push("/");
+        });
+    }
+
     return (
         <form onSubmit={onSubmitForm}>
             <div className="row g-3 align-items-center mb-3">
@@ -55,7 +99,7 @@ const Form = ({productos, setProductos}) => {
                     />
                 </div>
             </div>
-            <button type="submit" className="btn btn-primary">Create</button>
+            <button type="submit" className="btn btn-primary">{createNewProducto ? "Create" : "Edit"}</button>
         </form>
      )
 }
